@@ -1,0 +1,5 @@
+Extra files have been found: -1 point
+grade.txt  hello-world.c  lab2	lab2.c	lab2.txt
+
+
+Total: 5/6
