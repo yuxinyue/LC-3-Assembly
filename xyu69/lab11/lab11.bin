@@ -6,3 +6,14 @@
 
 ; The program description and code starts here
 
+1110 0110 0011 0001 ; initialize R3, to be used as a pointer to point to address x3132
+0101 1001 0010 0000 ; clear R4 by and R4 with 0
+0001 1001 0010 1010 ; add R4 with 10
+0101 1011 0110 0000 ; initial R5 to 0
+0110 0010 1100 0000 ; initial R1 to  have the first mumber from x3132, R3 = x3132
+0000 1100 0000 0001 ; check if R1 is less than or equal to 0, if true then jump to pc + offset 1
+0001 1011 0100 0001 ; Add R5 with R1
+0001 0110 1110 0001 ; increment pointer R3 + 1
+0001 1001 0011 1111 ; decrement counter R4 - 1
+0000 0011 1111 1010 ; check if R4 is greater than 0, if true jump to pc + offset (-6)
+1111 0000 0010 0101 ; halt
