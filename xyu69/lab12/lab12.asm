@@ -11,12 +11,13 @@
 ; R4 contains counter for inner loop
 ; R5 contains current sum
 
-            x3000
-
+            .ORIG x3000
+            LD    R0,ZERO             ; R0 contains 0
             LD    R1,INPUT            ; R1 contains input number
-            LD    R2,x3010            ; R2 contains -1
-            ADD   R3,R1,R2            ; R3 contains input number -1
-            ADD   R3,,R3,R2           ; R3 contains input number -2
+            LD    R2,NegativeOne      ; R2 contains -1
+            LD    R5,ZERO             ; R5 contains 0
+            ADD   R3,R1,R2            ; R3 contains input number-1
+            ;ADD   R3,R3,R2            ; R3 contains input number -2
                                       ;   (initializes outer count)
 OUTERLOOP   ADD   R4,R0,R3            ; Copy outer count into inner count
 
@@ -24,19 +25,21 @@ OUTERLOOP   ADD   R4,R0,R3            ; Copy outer count into inner count
 ;   30x4 = 30+30+30+30 = 120, etc)
 INNERLOOP   ADD   R5,R5,R1            ; Increment sum
             ADD   R4,R4,R2            ; Decrement inner count
-            BRzp  INNERLOOP           ; Branch to inner loop if inner count
-                                      ;   is positive or zero
+            BRp  INNERLOOP           ; Branch to inner loop if inner count
+                                      ;   is positive 
             ADD   R1,R0,R5            ; R1 now contains sum result from inner loop
-            LD    R5,x300F            ; Clear R5 (previous sum) to 0
+            LD    R5,ZERO             ; Clear R5 (previous sum) to 0
             ADD   R3,R3,R2            ; Decrement outer count
-            BRpz  OUTERLOOP           ; Branch to outer loop if outer count
-                                      ;   is positive or zero
+            BRp  OUTERLOOP           ; Branch to outer loop if outer count
+                                      ;   is positive 
 
-            ST   R1,x3011             ; This address contains X!          
+            ST   R1, RESULT           ; This address contains X!          
             TRAP x25
 
 INPUT      .FILL  x0005               ; Input for X!, in this case X = 5
-           .FILL  x0000
-           .FILL  xFFFF               ; 2's complement of 1 (i.e. -1)
-           .FILL  x0000               ; At program completion, the result is
+
+NegativeOne.FILL  xFFFF               ; 2's complement of 1 (i.e. -1)
+RESULT     .FILL  x0000               ; At program completion, the result is
                                       ;   stored here
+ZERO       .FILL  x0000
+           .END                       ; Tells the LC-3 assembler to stop assembling your code
