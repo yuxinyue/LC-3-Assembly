@@ -18,4 +18,4 @@ RESULT      x3011
 ZERO        x3012
 
 Question 3: Between using labels and explicit memory locations/offsets, which one makes the most sense, and why?
-Labels make a lot more sense. 1) it's clear to read and fins.2) When we want to add some line into the code, we dont have to worry about changing the offset.
+Labels make a lot more sense. 1) it's clear to read and find.2) When we want to add some line into the code, we dont have to worry about changing the offset.
