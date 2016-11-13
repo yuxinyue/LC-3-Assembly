@@ -1,9 +1,21 @@
 Question 1: Describe the errors that occur when trying to assemble lab12.asm. Identify the cause of each error.
+ 14: illegal operands for missing opcode (missing pseudo code .ORIG)
+ 16: instruction appears before .ORIG (missing pseudo code .ORIG)
+ 17: constant outside of allowed range (LD allows 9 bits offset, but x3010 is more than 9 bits)
+ 19: illegal operands for ADD (there is one more comma in the sentence)
+ 30: constant outside of allowed range (LD allows 9 bits offset, but x300F is more than 9 bits)
+ 32: label OUTERLOOP has already appeared (zp is the other way around)
+ 35: constant outside of allowed range (LD allows 9 bits offset, but x3011 is more than 9 bits)
+ 43: no .END directive found (To add the .END to tell the LC-3 assembler to stop assembling your code.)
 
 
-
-Question 2: For each label in the code, write down the corresponding memory location. 
-
-
+Question 2: For each label in the code, write down the corresponding memory location.
+OUTERLOOP   x3005 
+INNERLOOP   x3006
+INPUT       x300F 
+NegativeOne x3010
+RESULT      x3011
+ZERO        x3012
 
 Question 3: Between using labels and explicit memory locations/offsets, which one makes the most sense, and why?
+Labels make a lot more sense. 1) it's clear to read and fins.2) When we want to add some line into the code, we dont have to worry about changing the offset.
