@@ -3,6 +3,65 @@
 ; 8 bits (the high 8 bits, for your convenience) marking pixels in the
 ; line for that character.
 
+				.ORIG 	x3000
+				LDI	R1, ADDR_TWO
+				LD 	R2, NUM_FOUR
+
+MUL 			ADD R1, R1, R1;
+				ADD R2, R2, #-1;
+				BRp	MUL 
+				LEA R2, FONT_DATA
+				ADD R1, R1, R2 ; Find where the char's address is, and store it in R1
+				LD  R3, NUM_SIXTEEN ; load R3 with #16
+
+				; R3 != 0 ?
+NEXT_ROW		ADD R3, R3, #0
+				BRz DONE
+				; column counter set to 8
+				AND R4, R4, #0
+				ADD R4, R4, #8
+				LDR R5, R1, #0; Store the value in R1 to R5
+				ADD R1, R1, #1; move R1
+
+				; R4 != 0 ?
+NEXT_COLUMN		ADD R4, R4, #0
+				BRz DONE_ROW
+				
+				LD  R6, MASK
+				AND R6, R5, R6
+				BRn PRINT_1 ; choose 0 or 1
+				LDI R0, ADDR_ZERO ; print 0
+				OUT
+				BRnzp CONTINUE
+	PRINT_1		LDI R0, ADDR_ONE ; print 1
+				OUT
+	CONTINUE	ADD R5, R5, R5 ; shift R5 to left
+
+				; decrement column counter and move to next
+				ADD R4, R4, #-1
+				BRnzp NEXT_COLUMN
+
+				; print new line char
+DONE_ROW		LD R0, ASCII_NL ; load NewLine ASCII value
+				OUT
+			
+				; move to next row
+				ADD R3, R3, #-1
+				BRnzp NEXT_ROW
+
+DONE			HALT
+
+
+ASCII_NL 		.FILL xA
+
+MASK		.FILL 	x8000
+NUM_FOUR	.FILL 	x0004
+NUM_SIXTEEN	.FILL	x0010
+ADDR_ZERO	.FILL	x5000
+ADDR_ONE	.FILL	x5001
+ADDR_TWO	.FILL	x5002
+
+
 FONT_DATA
 	.FILL	x0000
 	.FILL	x0000
@@ -4100,3 +4159,6 @@ FONT_DATA
 	.FILL	x0000
 	.FILL	x0000
 	.FILL	x0000
+
+
+	.END
