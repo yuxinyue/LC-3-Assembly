@@ -4,16 +4,19 @@
 ; line for that character.
 
 				.ORIG 	x3000
-				LDI	R1, ADDR_TWO
-				LD 	R2, NUM_FOUR
+				LDI	R1, ADDR_TWO ;Initial R1 from address 5002
+				LD 	R2, NUM_FOUR ; Initail R2 to be #4
 
-MUL 			ADD R1, R1, R1;
-				ADD R2, R2, #-1;
+				; Times R1 with #16
+MUL 			ADD R1, R1, R1 ;
+				ADD R2, R2, #-1 ;
 				BRp	MUL 
-				LEA R2, FONT_DATA
-				ADD R1, R1, R2 ; Find where the char's address is, and store it in R1
-				LD  R3, NUM_SIXTEEN ; load R3 with #16
 
+				; Find where the char's address is, and store it in R1
+				LEA R2, FONT_DATA
+				ADD R1, R1, R2 
+
+				LD  R3, NUM_SIXTEEN ; load R3 with #16
 				; R3 != 0 ?
 NEXT_ROW		ADD R3, R3, #0
 				BRz DONE
@@ -21,31 +24,31 @@ NEXT_ROW		ADD R3, R3, #0
 				AND R4, R4, #0
 				ADD R4, R4, #8
 				LDR R5, R1, #0; Store the value in R1 to R5
-				ADD R1, R1, #1; move R1
+				ADD R1, R1, #1; Increasing R1 by 1
 
 				; R4 != 0 ?
 NEXT_COLUMN		ADD R4, R4, #0
-				BRz DONE_ROW
-				
+				BRz DONE_ROW				
+				;Get each bit by mask R5 with x8000
 				LD  R6, MASK
 				AND R6, R5, R6
-				BRn PRINT_1 ; choose 0 or 1
-				LDI R0, ADDR_ZERO ; print 0
+				BRn PRINT_1 ; Choose 0 or 1
+				LDI R0, ADDR_ZERO ; Print 0
 				OUT
 				BRnzp CONTINUE
-	PRINT_1		LDI R0, ADDR_ONE ; print 1
+	PRINT_1		LDI R0, ADDR_ONE ; Print 1
 				OUT
-	CONTINUE	ADD R5, R5, R5 ; shift R5 to left
+	CONTINUE	ADD R5, R5, R5 ; Shift R5 to left
 
 				; decrement column counter and move to next
 				ADD R4, R4, #-1
 				BRnzp NEXT_COLUMN
 
-				; print new line char
-DONE_ROW		LD R0, ASCII_NL ; load NewLine ASCII value
+				; Print new line char
+DONE_ROW		LD R0, ASCII_NL ; Load NewLine ASCII value
 				OUT
 			
-				; move to next row
+				; Move to next row
 				ADD R3, R3, #-1
 				BRnzp NEXT_ROW
 
