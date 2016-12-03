@@ -3,6 +3,85 @@
 ; 8 bits (the high 8 bits, for your convenience) marking pixels in the
 ; line for that character.
 
+
+				.ORIG 	x3000
+
+				LD  R3, NUM_SIXTEEN ; load R3 with #16
+				; R3 != 0 ?
+NEXT_ROW		ADD R3, R3, #0
+				BRz DONE
+				LD  R2, ADDR_TWO 
+				ST  R2, ADDR_VAR
+
+LOOP			LDI	R1, ADDR_VAR ;Initial R1 from address 5002
+				BRz DONE_ROW     ; Ending the program
+				LD  R6, ADDR_VAR ; Store 5002
+				ADD R6, R6, #1   ;R6 +1
+				ST  R6, ADDR_VAR ; Restore 
+
+				LD 	R2, NUM_FOUR ; Initail R2 to be #4
+				; Times R1 with #16
+MUL 			ADD R1, R1, R1 ;
+				ADD R2, R2, #-1 ;
+				BRp	MUL 
+
+				; Find where the char's address is, and store it in R1
+				LEA R2, FONT_DATA
+				ADD R1, R1, R2
+
+				LD  R7, NUM_ZERO ;Clear R7
+				LD  R6, NUM_SIXTEEN ;
+				NOT R7, R3      
+				ADD R7, R7, #1
+				ADD R6, R7, R6
+				ADD R1, R1, R6 ; Increasing R1 by R7
+				LDR R5, R1, #0 ; Store the value in R1 to R5
+
+				; column counter set to 8
+				AND R4, R4, #0
+				ADD R4, R4, #8
+				; R4 != 0 ?
+NEXT_COLUMN		ADD R4, R4, #0
+				BRz LOOP				
+				;Get each bit by mask R5 with x8000
+				LD  R6, MASK
+				AND R6, R5, R6
+				BRn PRINT_1 ; Choose 0 or 1
+				LDI R0, ADDR_ZERO ; Print 0
+				OUT
+				BRnzp CONTINUE
+	PRINT_1		LDI R0, ADDR_ONE ; Print 1
+				OUT
+	CONTINUE	ADD R5, R5, R5 ; Shift R5 to left
+
+				; decrement column counter and move to next
+				ADD R4, R4, #-1
+				BRnzp NEXT_COLUMN
+
+				; Print new line char
+DONE_ROW		LD R0, ASCII_NL ; Load NewLine ASCII value
+				OUT
+				; Move to next row
+				ADD R3, R3, #-1
+				ADD R7, R7, #1 
+				BRnzp NEXT_ROW
+
+DONE			HALT
+
+
+ASCII_NL 		.FILL xA
+
+MASK		.FILL 	x8000
+NUM_FOUR	.FILL 	x0004
+NUM_SIXTEEN	.FILL	x0010
+NUM_ZERO    .FILL   x0000
+ADDR_ZERO	.FILL	x5000
+ADDR_ONE	.FILL	x5001
+ADDR_TWO	.FILL	x5002
+ADDR_VAR	.BLKW	#1
+
+
+
 FONT_DATA
 	.FILL	x0000
 	.FILL	x0000
@@ -4100,3 +4179,6 @@ FONT_DATA
 	.FILL	x0000
 	.FILL	x0000
 	.FILL	x0000
+
+
+	.END
